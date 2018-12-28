@@ -9,7 +9,6 @@ CREATE TABLE ranking (
   rank INTEGER NOT NULL CHECK(rank >= 0),
   code TEXT NOT NULL,
   points INTEGER NOT NULL CHECK(points >= 0),
-  prevpoints INTEGER NOT NULL CHECK(prevpoints >= 0),
   movement INTEGER NOT NULL,
   confederation TEXT NOT NULL,
   date DATE NOT NULL
@@ -17,12 +16,12 @@ CREATE TABLE ranking (
 
 CREATE TABLE gdp (
   code TEXT PRIMARY KEY,
-  usdmln INTEGER NOT NULL
+  usdmln INTEGER NOT NULL CHECK(usdmln >= 0)
 );
 
 CREATE TABLE population (
   code TEXT PRIMARY KEY,
-  population INTEGER NOT NULL
+  population INTEGER NOT NULL CHECK(population >= 0)
 );
 
 CREATE TABLE countries (
@@ -34,3 +33,9 @@ CREATE TABLE countries (
 .import data/ranking.csv ranking
 .import data/gdp.csv gdp
 .import data/countries.csv countries
+
+DROP VIEW IF EXISTS current_ranking;
+CREATE VIEW current_ranking AS
+SELECT rank, code, points, movement, confederation, date
+FROM ranking
+WHERE date = (SELECT MAX(date) FROM ranking);

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.country.label }}
+            {{ form.country() }}
+        </div>
+        {{ form.submit() }}
+    </form>
+    {% if plays_currently %}
+        {{ country }}
+        <p>current rank: {{ rank }}</p>
+        <p>current rank in federation: {{ federation_rank }}</p>
+    {% endif %}
+    {% if country %}
+        <p>record high: {{ min }}
+            {% for date in min_dates %}
+                <ul>
+                    {{ date }}
+                </ul>
+            {% endfor %}
+        </p>
+        <p>record low: {{ max }}
+            {% for date in max_dates %}
+                <ul>
+                    {{ date }}
+                </ul>
+            {% endfor %}
+        </p>
+    {% endif %}
+{% endblock %}
