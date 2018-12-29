@@ -2,11 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
     <title>Football ranking</title>
 </head>
-<body>
+<body class="p-3">
     <header>
-        FIFA ranking visualisation
+        <h1 class="text-center">FIFA ranking visualisation</h1>
+        <nav class="nav d-flex mb-3 rounded justify-content-around container bg-light text-white">
+            <a href="{{ url_for('overall') }}" class="nav-item nav-link text-muted">overall</a>
+            <a href="{{ url_for('country') }}" class="nav-item nav-link text-muted">by country</a>
+            <a href="{{ url_for('compare') }}" class="nav-item nav-link text-muted">compare</a>
+        </nav>
         <hr>
     </header>
 

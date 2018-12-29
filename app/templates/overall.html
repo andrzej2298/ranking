@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <h1>Current top 30</h1>
+        <table>
+        {% for entry in top_thirty %}
+        <tr>
+            <td> {{ entry['rank'] }}. </td>
+            <td> {{ entry['country'] }} </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+    
+    <div id="choropleth"></div>
+    <div id="ten_pie"></div>
+    <ul>
+        <li>UEFA &ndash; Union of European Football Associations </li>
+        <li>CONMEBOL &ndash; South American Football Confederation</li>
+        <li>CONCACAF &ndash; Confederation of North, Central American and Caribbean Association Football</li>
+        <li>CAF &ndash; Confederation of African Football</li>
+        <li>AFC &ndash; Asian Football Confederation</li>
+    </ul>
+
+    <div>
+        <h1>Top 30 (taking into account the GDP)</h1>
+        <table>
+        {% for (rank, name) in top_gdp %}
+            <tr>
+                <td> {{ rank }}. </td>
+                <td> {{ name }} </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h1>Biggest improvement in 2018</h1>
+        <table>
+        {% for (name, improvement) in best %}
+            <tr>
+                <td> {{ improvement }} </td>
+                <td> {{ name }} </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h1>Worst decline in 2018</h1>
+        <table>
+        {% for (name, decline) in worst %}
+            <tr>
+                <td> {{ decline }} </td>
+                <td> {{ name }} </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h1>Top 30 (taking into account the population)</h1>
+        <table>
+        {% for (rank, name) in top_population %}
+            <tr>
+                <td> {{ rank }}. </td>
+                <td> {{ name }} </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h1>Top 30 (by average place)</h1>
+        <table>
+        {% for (rank, name) in average_ranking %}
+            <tr>
+                <td> {{ rank }}. </td>
+                <td> {{ name }} </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        var data = [{
+            type: 'choropleth',
+            locationmode: 'country names',
+            locations: {{ countries | safe }},
+            z: {{ ranks }},
+            text: {{ countries | safe }},
+            colorscale: 'Viridis'
+        }];
+
+        var layout = {
+            title: 'Current ranking on a map'
+        }
+   
+        Plotly.plot(document.getElementById('choropleth'), data, layout);
+    </script>
+    <script>
+        var data = [{
+            type: 'pie',
+            labels: {{ top_ten_confederations | safe }},
+            values: {{ top_ten_counts }},
+            name: 'Count of ranks in top 10',
+            domain: {
+                row: 0,
+                column: 0
+            }
+        },
+        {
+            type: 'pie',
+            labels: {{ top_five_confederations | safe }},
+            values: {{ top_five_counts }},
+            name: 'Count of ranks in top 5',
+            domain: {
+                row: 0,
+                column: 1
+            }
+        },
+        {
+            type: 'pie',
+            labels: {{ first_confederations | safe }},
+            values: {{ first_counts }},
+            name: 'Count of first places',
+            domain: {
+                row: 1,
+                column: 0
+            },
+            text: '1'
+        }]
+
+        var layout = {
+            title: 'Count of top ranks',
+            grid: {
+                rows: 2,
+                columns: 2
+            }
+        }
+
+        Plotly.plot(document.getElementById('ten_pie'), data, layout)
+    </script>
+{% endblock %}

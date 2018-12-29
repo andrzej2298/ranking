@@ -3,31 +3,67 @@
 {% block content %}
     <form action="" method="POST" novalidate>
         {{ form.hidden_tag() }}
-        <div>
-            {{ form.country.label }}
-            {{ form.country() }}
+        <div class="form-group">
+            <label>{{ form.country.label }}</label>
+            {{ form.country(class="form-control") }}
         </div>
         {{ form.submit() }}
     </form>
+    <hr>
     {% if plays_currently %}
-        {{ country }}
+        <h1>{{ country }}</h1>
         <p>current rank: {{ rank }}</p>
         <p>current rank in federation: {{ federation_rank }}</p>
     {% endif %}
     {% if country %}
         <p>record high: {{ min }}
+            <ul class="list-group">
             {% for date in min_dates %}
-                <ul>
-                    {{ date }}
-                </ul>
+                <li class="list-group-item">{{ date }}</li>
             {% endfor %}
+            </ul>
         </p>
         <p>record low: {{ max }}
+            <ul class="list-group">
             {% for date in max_dates %}
-                <ul>
-                    {{ date }}
-                </ul>
+                <li class="list-group-item">{{ date }}</li>
             {% endfor %}
+            </ul>
         </p>
     {% endif %}
+    <div id="history"></div>
+    <div id="histogram"></div>
+    <script>
+        var data = [{
+            x: {{ rank_dates | safe }},
+            y: {{ rank_values }},
+            type: 'scatter',
+            name: 'code',
+            mode: 'lines+markers',
+            marker: {
+                color: {{ color | safe }}
+            }
+        }]
+
+        var layout = {
+            yaxis: {
+                range: [220, 1]
+            },
+            title: 'Ranking history (grey represents World Cup years)'
+        }
+        Plotly.plot(document.getElementById('history'), data, layout)
+    </script>
+    <script>
+        var data = [{
+            x: {{ rank_values }},
+            type: 'histogram'
+        }]
+        var layout = {
+            xaxis : {
+                range: [1, 220]
+            },
+            title: 'Histogram of ranking places'
+        }
+        Plotly.plot(document.getElementById('histogram'), data, layout)
+    </script>
 {% endblock %}

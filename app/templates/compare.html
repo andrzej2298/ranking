@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label>{{ form.first_country.label }}</label>
+            {{ form.first_country(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label>{{ form.second_country.label }}</label>
+            {{ form.second_country(class="form-control") }}
+        </div>
+        {{ form.submit() }}
+    </form>
+    <hr>
+    <div id="history"></div>
+    <div id="histogram"></div>
+    <script>
+        var first_trace = {
+            x: {{ first_rank_dates | safe }},
+            y: {{ first_rank_values }},
+            type: 'scatter',
+            name: '{{ first_code }}',
+            mode: 'lines+markers'
+        };
+        var second_trace = {
+            x: {{ second_rank_dates | safe }},
+            y: {{ second_rank_values }},
+            type: 'scatter',
+            name: '{{ second_code }}',
+            mode: 'lines+markers'
+        };
+        var data = [first_trace, second_trace];
+        var layout = {
+            yaxis: {
+                range: [220, 1]
+            }
+        };
+        Plotly.plot(document.getElementById('history'), data, layout);
+    </script>
+    <script>
+        var first_trace = {
+            x: {{ first_rank_values }},
+            type: 'histogram',
+            opacity: 0.6,
+            name: '{{ first_code }}',
+            marker: {
+                color: 'blue'
+            }
+        };
+        var second_trace = {
+            x: {{ second_rank_values }},
+            type: 'histogram',
+            opacity: 0.6,
+            name: '{{ second_code }}',
+            marker: {
+                color: 'red'
+            }
+        };
+        var layout = {
+            xaxis: {
+                range: [1, 220]
+            },
+            barmode: 'overlay'
+        };
+        var data = [first_trace, second_trace];
+        Plotly.plot(document.getElementById('histogram'), data, layout);
+    </script>
+{% endblock %}
