@@ -1,18 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        <h1>Current top 30</h1>
-        <table>
-        {% for entry in top_thirty %}
-        <tr>
-            <td> {{ entry['rank'] }}. </td>
-            <td> {{ entry['country'] }} </td>
-        </tr>
-        {% endfor %}
-        </table>
+    <div class="row">
+        <div class="col">
+            <h1>Current top 30</h1>
+            <table>
+            {% for entry in top_thirty %}
+            <tr>
+                <td> {{ entry['rank'] }}. </td>
+                <td> {{ entry['country'] }} </td>
+            </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+        <div class="col">
+            <h1>Top 30</h1>
+            <h2>by overall average place</h2>
+            <table>
+            {% for (rank, name) in average_ranking %}
+                <tr>
+                    <td> {{ rank }}. </td>
+                    <td> {{ name }} </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
     </div>
-    
     <div id="choropleth"></div>
     <div id="ten_pie"></div>
     <ul>
@@ -22,63 +36,62 @@
         <li>CAF &ndash; Confederation of African Football</li>
         <li>AFC &ndash; Asian Football Confederation</li>
     </ul>
-
-    <div>
-        <h1>Top 30 (taking into account the GDP)</h1>
-        <table>
-        {% for (rank, name) in top_gdp %}
-            <tr>
-                <td> {{ rank }}. </td>
-                <td> {{ name }} </td>
-            </tr>
-        {% endfor %}
-        </table>
+    <div class="row">
+        <div class="col">
+            <h1>Biggest improvement in 2018</h1>
+            <table>
+            {% for (name, improvement) in best %}
+                <tr>
+                    <td> {{ name }} </td>
+                    <td> {{ improvement }} </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <h1>Worst decline in 2018</h1>
+            <table>
+            {% for (name, decline) in worst %}
+                <tr>
+                    <td> {{ name }} </td>
+                    <td> {{ decline }} </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
     </div>
-    <div>
-        <h1>Biggest improvement in 2018</h1>
-        <table>
-        {% for (name, improvement) in best %}
-            <tr>
-                <td> {{ improvement }} </td>
-                <td> {{ name }} </td>
-            </tr>
-        {% endfor %}
-        </table>
+    <div class="row">
+        <div class="col">
+            <h1>Top 30</h1>
+            <h2>taking into account the GDP</h2>
+            <p>
+                where: $$new\ rank=current\ rank\sqrt{\frac{country\ GDP}{max\ GDP}}$$
+            </p>
+            <table>
+            {% for (rank, name) in top_gdp %}
+                <tr>
+                    <td> {{ rank }}. </td>
+                    <td> {{ name }} </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <h1>Top 30</h1>
+            <h2>taking into account the population</h2>
+            <p>
+                where: $$new\ rank=current\ rank\sqrt{\frac{country\ population}{max\ population}}$$
+            </p>
+            <table>
+            {% for (rank, name) in top_population %}
+                <tr>
+                    <td> {{ rank }}. </td>
+                    <td> {{ name }} </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
     </div>
-    <div>
-        <h1>Worst decline in 2018</h1>
-        <table>
-        {% for (name, decline) in worst %}
-            <tr>
-                <td> {{ decline }} </td>
-                <td> {{ name }} </td>
-            </tr>
-        {% endfor %}
-        </table>
-    </div>
-    <div>
-        <h1>Top 30 (taking into account the population)</h1>
-        <table>
-        {% for (rank, name) in top_population %}
-            <tr>
-                <td> {{ rank }}. </td>
-                <td> {{ name }} </td>
-            </tr>
-        {% endfor %}
-        </table>
-    </div>
-    <div>
-        <h1>Top 30 (by average place)</h1>
-        <table>
-        {% for (rank, name) in average_ranking %}
-            <tr>
-                <td> {{ rank }}. </td>
-                <td> {{ name }} </td>
-            </tr>
-        {% endfor %}
-        </table>
-    </div>
-
     <script>
         var data = [{
             type: 'choropleth',
@@ -86,11 +99,12 @@
             locations: {{ countries | safe }},
             z: {{ ranks }},
             text: {{ countries | safe }},
-            colorscale: 'Viridis'
+            colorscale: 'Viridis',
+            showscale: false
         }];
 
         var layout = {
-            title: 'Current ranking on a map'
+            title: 'Current ranking on a map',
         }
    
         Plotly.plot(document.getElementById('choropleth'), data, layout);

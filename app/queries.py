@@ -11,13 +11,14 @@ queries = {
         WHERE code = '{code}';
     """,
     'min_max': """
-        SELECT rank, date
+        SELECT DISTINCT rank, strftime('%Y', date) AS year
         FROM ranking
         WHERE code = '{code}'
         AND rank = (
             SELECT {function}(rank)
             FROM ranking
-            WHERE code = '{code}');
+            WHERE code = '{code}')
+        ORDER BY date;
     """,
     'federation_rank': """
         WITH current_confederation AS (
@@ -83,21 +84,33 @@ queries = {
         ORDER BY AVG(ranking.rank);
     """,
     'movement': """
-        WITH current_countries AS (
-            SELECT current_ranking.code AS code,
-            countries.name AS name
-            FROM current_ranking
-            JOIN countries
-            ON current_ranking.code = countries.code
+        WITH last_rank AS (
+            SELECT code, rank
+            FROM ranking
+            WHERE date = (
+                SELECT MAX(date) AS date
+                FROM ranking
+                WHERE date <= '2018-12-31'
+            )
+        ),
+        first_rank AS (
+            SELECT code, rank
+            FROM ranking
+            WHERE date = (
+                SELECT MIN(date) AS date
+                FROM ranking
+                WHERE date >= '2018-01-01'
+            )
         )
-        SELECT current_countries.name AS name,
-        SUM(ranking.movement) AS movement
-        FROM current_countries
-        JOIN ranking
-        ON current_countries.code = ranking.code
-        WHERE date >= '2018-01-01'
-        GROUP BY current_countries.code
-        ORDER BY movement {mode}
+        SELECT countries.name,
+        last_rank.rank - first_rank.rank AS global_movement
+        FROM last_rank
+        JOIN first_rank
+        ON last_rank.code = first_rank.code
+        JOIN countries
+        ON last_rank.code = countries.code
+        WHERE global_movement IS NOT NULL
+        ORDER BY global_movement {mode}
         LIMIT 10;
     """
 }
@@ -131,9 +144,9 @@ def plays_currently(code):
 def mins_and_maxes(code):
     mins = query(queries['min_max'].format(code=code, function='MIN'))
     maxes = query(queries['min_max'].format(code=code, function='MAX'))
-    min_results = [{'date': entry['date'], 'rank': entry['rank']}
+    min_results = [{'year': entry['year'], 'rank': entry['rank']}
                    for entry in mins]
-    max_results = [{'date': entry['date'], 'rank': entry['rank']}
+    max_results = [{'year': entry['year'], 'rank': entry['rank']}
                    for entry in maxes]
     return {'mins': min_results, 'maxes': max_results}
 
@@ -179,9 +192,9 @@ def averages():
 
 def best_movement():
     queried = query(queries['movement'].format(mode='DESC'))
-    return [(entry['name'], entry['movement']) for entry in queried]
+    return [(entry['name'], entry['global_movement']) for entry in queried]
 
 
 def worst_movement():
     queried = query(queries['movement'].format(mode='ASC'))
-    return [(entry['name'], entry['movement']) for entry in queried]
+    return [(entry['name'], entry['global_movement']) for entry in queried]

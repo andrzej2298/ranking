@@ -12,24 +12,26 @@
     <hr>
     {% if plays_currently %}
         <h1>{{ country }}</h1>
-        <p>current rank: {{ rank }}</p>
-        <p>current rank in federation: {{ federation_rank }}</p>
+        <p>current rank: <b>{{ rank }}</b></p>
+        <p>current rank in federation: <b>{{ federation_rank }}</b></p>
     {% endif %}
     {% if country %}
-        <p>record high: {{ min }}
-            <ul class="list-group">
-            {% for date in min_dates %}
-                <li class="list-group-item">{{ date }}</li>
-            {% endfor %}
-            </ul>
-        </p>
-        <p>record low: {{ max }}
-            <ul class="list-group">
-            {% for date in max_dates %}
-                <li class="list-group-item">{{ date }}</li>
-            {% endfor %}
-            </ul>
-        </p>
+        <div>
+            <p>record high: <b>{{ min }}</b><br>
+                years:
+                {% for date in min_years %}
+                    {{ date }} 
+                {% endfor %}
+            </p>
+        </div>
+        <div>
+            <p>record low: <b>{{ max }}</b><br>
+                years:
+                {% for date in max_years %}
+                    {{ date }} 
+                {% endfor %}
+            </p>
+        </div>
     {% endif %}
     <div id="history"></div>
     <div id="histogram"></div>

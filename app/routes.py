@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, redirect
 from app import app
 from app.queries import all_countries, current_rank, mins_and_maxes
 from app.queries import current_federation_rank, plays_currently
@@ -12,7 +12,7 @@ from math import sqrt
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return redirect('/country')
 
 
 def get_gdp_rank(gdp_population):
@@ -111,8 +111,8 @@ def get_records(code):
     mins = records['mins']
     maxes = records['maxes']
     return {
-        'min_dates': [entry['date'] for entry in mins],
-        'max_dates': [entry['date'] for entry in maxes],
+        'min_years': [entry['year'] for entry in mins],
+        'max_years': [entry['year'] for entry in maxes],
         'min': mins[0]['rank'],
         'max': maxes[0]['rank']
     }
@@ -146,8 +146,8 @@ def country():
                                plays_currently=plays,
                                country=country,
                                rank=rank,
-                               min_dates=records['min_dates'],
-                               max_dates=records['max_dates'],
+                               min_years=records['min_years'],
+                               max_years=records['max_years'],
                                min=records['min'],
                                max=records['max'],
                                federation_rank=federation_rank,
