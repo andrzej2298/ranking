@@ -10,9 +10,8 @@ from math import sqrt
 
 
 @app.route('/')
-@app.route('/index')
 def index():
-    return redirect('/country')
+    return redirect('/overall')
 
 
 def get_gdp_rank(gdp_population):
@@ -33,6 +32,7 @@ def get_population_rank(gdp_population):
     return sorted(new_rank, key=lambda k: k['value'])
 
 
+@app.route('/index')
 @app.route('/overall')
 def overall():
     map_data = current_ranking()

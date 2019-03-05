@@ -35,7 +35,8 @@
         var layout = {
             yaxis: {
                 range: [220, 1]
-            }
+            },
+            title: 'Ranking history'
         };
         Plotly.plot(document.getElementById('history'), data, layout);
     </script>
@@ -62,7 +63,8 @@
             xaxis: {
                 range: [1, 220]
             },
-            barmode: 'overlay'
+            barmode: 'overlay',
+            title: 'Histogram of ranking places'
         };
         var data = [first_trace, second_trace];
         Plotly.plot(document.getElementById('histogram'), data, layout);
